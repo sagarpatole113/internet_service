@@ -1,8 +1,9 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
-import { Button, Col, Form, FormGroup, Input, Label, Row } from "reactstrap";
+import { Button, Col, Form, FormGroup, Input, Row } from "reactstrap";
 import base_url from "../api/API";
+import { useNavigate } from "react-router-dom";
 
 
 const AdminLogin = () => {
@@ -10,6 +11,9 @@ const AdminLogin = () => {
         admin_Id: '',
         decryptedPassword:''
     });
+
+const navigate = useNavigate();
+
 
     const handleForm = (e) => {
       e.preventDefault();
@@ -24,10 +28,13 @@ const AdminLogin = () => {
         (response) => {
           console.log(response);
           toast.success("Login successfully!")
+          if(response){
+            navigate('/dashboard')
+          }
         },
         (error) => {
           console.log(error);
-          toast.error("Something Went Wrong")
+          toast.error("Invalid Credintials")
         }
       );
     };
@@ -36,12 +43,10 @@ const AdminLogin = () => {
     <div>
       <Row onSubmit={handleForm}>
         <Col sm="4" xs="6"></Col>
-        <Col className="bg-light border pt-3 pb-2 " style={{marginTop: "10%"}}  sm="4" xs="6">
+        <Col className=" pt-3 pb-2 " style={{marginTop: "10%"}}  sm="4" xs="6">
           <Form>
             <FormGroup>
-              <Label >
-                Admin Id
-              </Label>
+            
 
               <Input
                 placeholder="Admin Id"
@@ -54,10 +59,7 @@ const AdminLogin = () => {
               />
             </FormGroup>
             <FormGroup>
-              <Label >
-                Password
-              </Label>
-
+             
               <Input
                 placeholder="Password"
                 type="password"

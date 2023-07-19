@@ -3,6 +3,7 @@ import EmployeeRow from "./EmployeeRow";
 import base_url from '../api/API'
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 const Dashboard = () => {
   const [data, setData] = useState([]);
@@ -50,8 +51,10 @@ const Dashboard = () => {
       await axios.put(`${base_url}/Employee/${selectedUserId}`, updateEmp);
       fetchData();
       toggle(null);
+      toast.success("Request updated")
     } catch (error) {
       console.error(error);
+      toast.error("Something went wrong")
     }
   };
   return (
@@ -62,11 +65,10 @@ const Dashboard = () => {
           placeholder="Search by Employee ID"
           value={searchQuery}
           onChange={handleSearch}
-          className="w-25"
+          className="w-25 mt-2"
         />
-        <Button onClick={handleSearch}>Search</Button>
-  </div>
-      <Table className="table table-hover">
+   </div>
+      <Table >
         <thead>
           <tr>
             <th scope="col">Employee Id</th>

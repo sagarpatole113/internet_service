@@ -3,12 +3,28 @@ import React, { useState } from "react";
 import base_url from "../api/API";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Button, Col, Container, Form, FormGroup, Input, Label, Row } from 'reactstrap'
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  CardText,
+  Col,
+  Container,
+  Form,
+  FormGroup,
+  Input,
+  Label,
+  Row,
+} from "reactstrap";
 //import { toast } from "react-toastify";
-import { Link } from "react-router-dom";
+//import { Link } from "react-router-dom";
 
 const Register = () => {
   const [employee, setEmployee] = useState({});
+  const [data, setData] = useState([]);
+  const [empId,setEmpId] = useState('');
+  const [showResults, setShowResults] = useState(false)
 
   const handleForm = (e) => {
     e.preventDefault();
@@ -32,35 +48,20 @@ const Register = () => {
     );
   };
 
+
+  const fetchData = async () => {
+      try {
+        const response = await axios.get(`${base_url}/Employee/${empId}`);
+        setData(response.data);
+        console.log(response.data);
+        setShowResults(true)
+      } catch (error) {
+        console.error(error);
+      }
+    };
+      
   return (
     <>
-      <nav class="navbar navbar-light bg-light justify-content-end">
-        <Link
-          to={`/admin-login`}
-          class="btn btn-outline-success me-2"
-          type="button"
-        >
-          Admin Logn
-        </Link>
-
-        <div class="mr-3 d-flex flex-row    ">
-          <div class="  d-flex  ">
-            <input
-              type="search"
-              id="search"
-              class="form-control me-1"
-              placeholder="Employee ID"
-            />
-          </div>
-        </div>
-
-        <div class="  d-flex  ">
-          <button type="button" class="btn btn-primary me-3">
-            Search
-          </button>
-        </div>
-      </nav>
-
       <div>
         <Container>
           <Row xs="2">
@@ -165,7 +166,44 @@ const Register = () => {
               </Form>
             </Col>
 
-            <Col sm="4"></Col>
+            <Col sm="4">
+              <Container>
+              <div className="d-flex justify-content-end mb-3 mt-2">
+        <Input
+          type="text"
+          placeholder="Check Status"
+          onChange={(e)=>{setEmpId(e.target.value)}}
+          className="w-30 me-2"
+        />
+        <Button onClick={fetchData} >Search</Button>
+        </div>
+        { showResults ? 
+                <div >
+                  <Card
+                    className="my-2"
+                    color="primary"
+                    outline
+                    style={{
+                      width: "18rem",
+                    }}
+                  >
+                    <CardHeader tag="h5">Employee Status</CardHeader>
+                    <CardBody>
+                      <CardText>Employee Id : {empId}</CardText>
+                      <CardText>First Name : {data.first_Name}</CardText>
+                      <CardText>Last Name : {data.last_Name}</CardText>
+                      <CardText>Status : {data.status}</CardText>
+                      <CardText>
+                        Requested Date : {data.requested_Date}
+                      </CardText>
+                      <CardText>Approval Date : {data.approval_Date}</CardText>
+                      <CardText>Remark : {data.remark}</CardText>
+                    </CardBody>
+                  </Card>
+                </div>
+                 : null }
+              </Container>
+            </Col>
           </Row>
         </Container>
       </div>

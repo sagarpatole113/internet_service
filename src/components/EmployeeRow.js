@@ -1,33 +1,38 @@
-import React, { useEffect, useState } from "react";
-import { Button } from "reactstrap";
+//import React, { useEffect, useState } from "react";
+import React from "react";
+//import { Button } from "reactstrap";
 
 const EmployeeRow = ({ emp, onUpdate }) => {
-  const [formattedRequestDate, setFormattedRequestDate] = useState("");
-  const [formattedApprovalDate, setFormattedApprovalDate] = useState("");
+  // const [formattedRequestDate, setFormattedRequestDate] = useState("");
+  // const [formattedApprovalDate, setFormattedApprovalDate] = useState("");
 
-  useEffect(() => {
-    if (emp) {
-      const formattedRequest = formatDate(emp.requested_Date);
-      setFormattedRequestDate(formattedRequest);
+  // useEffect(() => {
+  //   if (emp) {
+  //     const formattedRequest = formatDate(emp.requested_Date);
+  //     setFormattedRequestDate(formattedRequest);
+      
+  //     if(emp.approval_Date != null)
+  //     {const formattedApproval = formatDate();
+      
+  //     setFormattedApprovalDate(formattedApproval)}
 
-      const formattedApproval = formatDate(emp.approval_Date);
-      setFormattedApprovalDate(formattedApproval);
-    }
-  }, [emp]);
+  //     else setFormattedApprovalDate(null)
+  //   }
+  // }, [emp]);
 
-  const formatDate = (dateString) => {
-    const dateObj = new Date(dateString);
-    const options = {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true,
-    };
-    const formattedDate = dateObj.toLocaleString(undefined, options);
-    return formattedDate;
-  };
+  // const formatDate = (dateString) => {
+  //   const dateObj = new Date(dateString);
+  //   const options = {
+  //     year: "numeric",
+  //     month: "long",
+  //     day: "numeric",
+  //     hour: "numeric",
+  //     minute: "numeric",
+  //     hour12: true,
+  //   };
+  //   const formattedDate = dateObj.toLocaleString(undefined, options);
+  //   return formattedDate;
+  // };
 
   return (
     <tr>
@@ -39,17 +44,13 @@ const EmployeeRow = ({ emp, onUpdate }) => {
       <td>{emp.department}</td>
       <td>{emp.position}</td>
       <td>{emp.status}</td>
-      <td>{formattedRequestDate}</td>
-      <td>{formattedApprovalDate}</td>
+      <td>{emp.requested_Date}</td>
+      <td>{emp.approval_Date}</td>
+      {/* <td>{formattedRequestDate}</td>
+      <td>{formattedApprovalDate}</td> */}
       <td>{emp.remark}</td>
       <td>
-        <Button
-         
-          className="btn btn-primary"
-          onClick={() => onUpdate(emp.id)}
-        >
-          Update
-        </Button>
+      <button type="button" class="btn btn-outline-primary"onClick={() => onUpdate(emp.id)}>Update</button>
       </td>
     </tr>
   );
