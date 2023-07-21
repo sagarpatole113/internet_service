@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import base_url from "../api/API";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -21,39 +21,97 @@ import {
 //import { Link } from "react-router-dom";
 
 const Register = () => {
-  const [employee, setEmployee] = useState({});
-  const [data, setData] = useState([]);
+  const [employee, setEmployee] = useState({emp_Id: "",
+  phone: "",});
+  const [single, setSingle] = useState([]);
   const [empId,setEmpId] = useState('');
   const [showResults, setShowResults] = useState(false)
+  const [isSubmitted, setIsSubmitted] = useState(false)
+  const [formattedRequestDate, setFormattedRequestDate] = useState("");
+  const [formattedApprovalDate, setFormattedApprovalDate] = useState("");
+
+
+  const handleEmployeeIdChange = (e) => {
+    const empIdValue = e.target.value;
+    const numericEmpId = empIdValue.replace(/\D/g, "");
+    if (numericEmpId.length <= 8) {
+    setEmployee({ ...employee, emp_Id: numericEmpId });
+    }
+    };
+    
+    const handlePhoneChange = (e) => {
+    const phoneValue = e.target.value;
+    const numericPhone = phoneValue.replace(/\D/g, "");
+    if (numericPhone.length <= 10 ) {
+    setEmployee({ ...employee, phone: numericPhone });
+    }
+    };
+
+  useEffect(() => {
+    if (single) {
+      const formattedRequest = formatDate(single.requested_Date);
+      setFormattedRequestDate(formattedRequest);
+      
+      const formattedApproval = formatDate(single.approval_Date);
+      setFormattedApprovalDate(formattedApproval)
+    }
+  }, [single]);
+
+  const formatDate = (dateString) => {
+    if (!dateString) {
+      return " "; // Or any other meaningful default value you prefer
+      }
+    const dateObj = new Date(dateString);
+    if (isNaN(dateObj.getTime())) {
+      return "Invalid Date"; // Handle invalid date strings, if necessary
+      }
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    };
+    const formattedDate = dateObj.toLocaleString(undefined, options);
+    return formattedDate;
+  };
+
 
   const handleForm = (e) => {
     e.preventDefault();
-    console.log(employee);
+    if(employee.phone.length !== 10){
+      toast.error("Phone number must be 10")
+    }  
+   if(employee.emp_Id.length !==8){
+    toast.error("Enter 8 digit Employee Id")
+  }
+  if(employee.phone.length == 10 && employee.emp_Id.length == 8)
+  {
+    setIsSubmitted(true);
     const count = postDataOnServer(employee);
     if (count != null) {
       setEmployee({});
     }
+   }
   };
   // console.log(employee);
   const postDataOnServer = (data) => {
     axios.post(`${base_url}/Employee`, data).then(
       (response) => {
-        console.log(response);
         toast.success("Registered successfully!");
+        response.data && window.location.replace(`/`)
       },
       (error) => {
         console.log(error);
-        toast.error("Something Went Wrong");
       }
     );
   };
 
-
   const fetchData = async () => {
       try {
         const response = await axios.get(`${base_url}/Employee/${empId}`);
-        setData(response.data);
-        console.log(response.data);
+        setSingle(response.data);
         setShowResults(true)
       } catch (error) {
         console.error(error);
@@ -65,9 +123,13 @@ const Register = () => {
       <div>
         <Container>
           <Row xs="2">
+            
             <Col sm="4" xs="6"></Col>
-
+              
             <Col className="" sm="4" xs="6" style={{ marginTop: "7%" }}>
+            <Label style={{fontSize : '25px'}}>
+             Employee Registration
+            </Label>
               <Form onSubmit={handleForm}>
                 <FormGroup>
                   <Label hidden>First Name</Label>
@@ -99,12 +161,10 @@ const Register = () => {
                   <Label hidden>Employee Id</Label>
                   <Input
                     name="Employee Id"
-                    onChange={(e) => {
-                      setEmployee({ ...employee, emp_Id: e.target.value });
-                    }}
+                    onChange={handleEmployeeIdChange}
                     value={employee.emp_Id}
                     required
-                    placeholder="Employee Id"
+                    placeholder="Enter 8 digit Employee Id"
                     type="text"
                   />
                 </FormGroup>
@@ -113,13 +173,11 @@ const Register = () => {
 
                   <Input
                     name="Phone"
-                    onChange={(e) => {
-                      setEmployee({ ...employee, phone: e.target.value });
-                    }}
+                    onChange={handlePhoneChange}
                     value={employee.phone}
                     required
                     placeholder="Phone"
-                    type="number"
+                    type="text"
                   />
                 </FormGroup>
                 <FormGroup>
@@ -187,17 +245,17 @@ const Register = () => {
                       width: "18rem",
                     }}
                   >
-                    <CardHeader tag="h5">Employee Status</CardHeader>
+                    <CardHeader tag="h5">Employee Status <a class="btn btn-primary btn-close "style={{marginLeft:"29%"}} href="/" role="button"></a></CardHeader>
                     <CardBody>
-                      <CardText>Employee Id : {empId}</CardText>
-                      <CardText>First Name : {data.first_Name}</CardText>
-                      <CardText>Last Name : {data.last_Name}</CardText>
-                      <CardText>Status : {data.status}</CardText>
+                      <CardText>Employee Id : {single.emp_Id}</CardText>
+                      <CardText>First Name : {single.first_Name}</CardText>
+                      <CardText>Last Name : {single.last_Name}</CardText>
+                      <CardText>Status : {single.status}</CardText>
                       <CardText>
-                        Requested Date : {data.requested_Date}
+                        Requested Date : {formattedRequestDate}
                       </CardText>
-                      <CardText>Approval Date : {data.approval_Date}</CardText>
-                      <CardText>Remark : {data.remark}</CardText>
+                      <CardText>Approval Date : {formattedApprovalDate}</CardText>
+                      <CardText>Remark : {single.remark}</CardText>
                     </CardBody>
                   </Card>
                 </div>

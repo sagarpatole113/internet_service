@@ -1,6 +1,16 @@
-import { Button, Col, Form, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Table } from "reactstrap";
+import {
+  Button,
+  Col,
+  Form,
+  Input,
+  Label,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+} from "reactstrap";
 import EmployeeRow from "./EmployeeRow";
-import base_url from '../api/API'
+import base_url from "../api/API";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -11,15 +21,16 @@ const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [selectedUserId, setSelectedUserId] = useState(null);
+ 
   const toggle = (emp_Id) => {
     setModal(!modal);
     setSelectedUserId(emp_Id);
   };
+
   const [updateEmp, setUpdateEmp] = useState({
     status: "",
     remark: "",
   });
-  
 
   useEffect(() => {
     fetchData();
@@ -44,33 +55,37 @@ const Dashboard = () => {
     );
     setSearchResults(results);
   };
-  
 
   const handleUpdateUser = async () => {
     try {
       await axios.put(`${base_url}/Employee/${selectedUserId}`, updateEmp);
       fetchData();
       toggle(null);
-      toast.success("Request updated")
+      toast.success("Request updated");
     } catch (error) {
       console.error(error);
-      toast.error("Something went wrong")
+      toast.error("Something went wrong");
     }
   };
+
+ 
   return (
-<div className="container">
-  <div className="d-flex justify-content-end mb-3">
-        <Input
+    <div className="container table table-bordered">
+      
+      <div className="d-flex justify-content-end mb-3" > 
+        <Input 
           type="text"
           placeholder="Search by Employee ID"
           value={searchQuery}
           onChange={handleSearch}
           className="w-25 mt-2"
+         
         />
-   </div>
-      <Table >
+      </div>
+      <table>
+        
         <thead>
-          <tr>
+          <tr >
             <th scope="col">Employee Id</th>
             <th scope="col">First Name</th>
             <th scope="col">Last Name</th>
@@ -86,21 +101,14 @@ const Dashboard = () => {
           </tr>
         </thead>
         {searchResults.length > 0
-            ? searchResults.map((emp) => (
-                <EmployeeRow
-                  key={emp.id}
-                  emp={emp}
-                  onUpdate={toggle}
-                />
-              ))
-            : data.map((emp) => (
-                <EmployeeRow
-                  key={emp.id}
-                  emp={emp}
-                  onUpdate={toggle}
-                />
-              ))}
-              </Table>
+          ? searchResults.map((emp) => (
+              <EmployeeRow key={emp.id} emp={emp} onUpdate={toggle} />
+            ))
+          : data.map((emp) => (
+              <EmployeeRow key={emp.id} emp={emp} onUpdate={toggle} />
+            ))}
+             
+      </table >
 
       <Modal isOpen={modal} toggle={() => toggle(null)}>
         <ModalHeader toggle={() => toggle(null)}>Update Status</ModalHeader>
@@ -108,14 +116,16 @@ const Dashboard = () => {
           <Form>
             <Col>
               <Label className="form-label">Status</Label>
-              <Input
-                type="text"
-                className="form-control"
+              <select
+                class="form-select"
                 onChange={(e) => {
                   setUpdateEmp({ ...updateEmp, status: e.target.value });
                 }}
                 value={updateEmp.status}
-              />
+              >
+                <option>Approved</option>
+                <option>Rejected</option>
+              </select>
             </Col>
             <Col>
               <Label className="form-label">Remark</Label>
@@ -139,8 +149,7 @@ const Dashboard = () => {
           </Button>
         </ModalFooter>
       </Modal>
-</div>
-  
+    </div>
   );
 };
 
