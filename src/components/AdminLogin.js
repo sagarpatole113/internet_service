@@ -3,12 +3,14 @@ import React, { useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { Button, Col, Container, Form, FormGroup, Input, Label, Row } from "reactstrap";
 import base_url from "../api/API";
-import { ComponentToPrint } from "./ComponentToPrint";
 import { useReactToPrint } from "react-to-print";
+import { Link } from "react-router-dom";
+import { ComponentToShow } from "./ComponentToShow";
+import { ComponentToPrint } from "./ComponentToPrint";
 
 const AdminLogin = () => {
 
-
+  const [isPrintClicked, setPrintClicked] = useState(false);
   const [isLoggedin, setIsLoggedin] = useState(false);
   const [admin, setAdmin] = useState({
     admin_Id: '',
@@ -20,6 +22,13 @@ const logout = () => {
   setIsLoggedin(false);
 };
 
+const handleDownload =()=>{
+  setPrintClicked(true); 
+}
+const changeView =()=>{
+  setPrintClicked(false);
+ 
+}
 
 const handleForm = (e) => {
   e.preventDefault();
@@ -52,9 +61,15 @@ const postDataOnServer = (data) => {
 
   return (
     <>
-    
     {!isLoggedin ? (
 					<>
+          <Container>
+            
+     <div className="mt-2">
+                  <Link to={'/'}>
+                  <Button>Back</Button>
+                  </Link>
+                </div>
 <div>
       <Row >
         <Col sm="4" xs="6"></Col>
@@ -92,15 +107,24 @@ const postDataOnServer = (data) => {
         <Col sm="4"></Col>
       </Row>
     </div>
+    </Container>
     </>
     				) : (
               <>
               <Container> 
                 <div style={{marginTop:'2%'}} >
-              <button class="btn btn-outline-secondary me-3" onClick={handlePrint}>Print</button>
-              <button  class="btn btn-outline-secondary " onClickCapture={logout}>Logout</button>
-      <ComponentToPrint ref={componentRef} />
-                </div>
+                {isPrintClicked?(<button  class="btn btn-outline-secondary me-3 " onClick={handlePrint}>Download</button>):null}
+             
+                {!isPrintClicked? ( <button class="btn btn-outline-secondary me-3 " onClick={handleDownload} >Print Preview</button>):null}
+               {isPrintClicked? (<button class="btn btn-outline-secondary me-3 " onClick={changeView} >Dashboard</button>):null}
+               
+               
+              
+                <button  class="btn btn-outline-secondary float-end " onClickCapture={logout}>Logout</button>
+            
+              {isPrintClicked ? (<ComponentToPrint ref={componentRef}  />  )
+              :(<ComponentToShow ref={componentRef}/>)}                
+              </div>
               
                 </Container>
                 

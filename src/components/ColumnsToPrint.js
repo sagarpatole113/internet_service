@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 
-const EmployeeRow = ({ emp, onUpdate }) => {
+const ColumnsToPrint = ({ emp }) => {
   const [formattedRequestDate, setFormattedRequestDate] = useState("");
   const [formattedApprovalDate, setFormattedApprovalDate] = useState("");
 
@@ -50,10 +50,7 @@ const EmployeeRow = ({ emp, onUpdate }) => {
       <td>{formattedRequestDate}</td>
       <td>{formattedApprovalDate}</td>
       <td>{emp.remark}</td>
-      <td >
-      <button type="button" class="btn btn-outline-primary active"onClick={() => onUpdate(emp.id)}>Update</button>
-      </td>
     </tr>
   );
 };
-export default EmployeeRow;
+export default ColumnsToPrint;

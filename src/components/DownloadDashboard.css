@@ -1,0 +1,17 @@
+@media print {
+    .status-dropdown,
+    .btn-outline-secondary {
+      display: none !important;
+    }
+  }
+  
+  .form-select {
+    max-width: 180px; 
+    font-size: 14px; 
+    margin-right: 40px;
+  }
+  
+  .status-dropdown {
+    display: flex;
+    justify-content: flex-end;
+  }
